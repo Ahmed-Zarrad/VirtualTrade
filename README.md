@@ -1,5 +1,6 @@
 # VirtualTrade
 A high-performance stock trading simulation and investment analysis platform built for academic research using Spring Boot, MongoDB, and Redis.
+
 📖 Overview
 
 VirtualTrade is an academic project designed to simulate a real-world stock market environment. It provides a risk-free platform for users to practice trading strategies, manage virtual portfolios, and analyze market trends.
