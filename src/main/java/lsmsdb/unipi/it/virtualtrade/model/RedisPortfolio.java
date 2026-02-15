@@ -4,40 +4,35 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
+import java.time.Instant;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
+@RedisHash("portfolios")
 @Data
-@Document(collection = "portfolios")
-public class Portfolio {
+@NoArgsConstructor
+@AllArgsConstructor
+public class RedisPortfolio {
+
     @Id
-    private String id;
-
-    @Indexed
     private String userId;
-
-    private String portfolioName;
-
 
     private BigDecimal cashBalance;
 
-
     private List<Holding> holdings = new ArrayList<>();
 
-    private Instant lastUpdated = Instant.now();
-
+    private Instant lastUpdated;
 
     @Data
-    @AllArgsConstructor
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Holding {
         private String symbol;
         private Integer quantity;
         private BigDecimal averageBuyPrice;
     }
 }
+

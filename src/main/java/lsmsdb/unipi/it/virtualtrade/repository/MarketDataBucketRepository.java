@@ -7,6 +7,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface MarketDataBucketRepository extends MongoRepository<MarketDataBucket, String> {
-    @Query("{ 'symbol': ?0, 'date': ?1, 'hour': ?2 }")
-    Optional<MarketDataBucket> findBucket(String symbol, LocalDate date, Integer hour);
+    @Query("{ 'symbol': ?0, 'date': ?1, }")
+    Optional<MarketDataBucket> findBucket(String symbol, LocalDate date);
 }

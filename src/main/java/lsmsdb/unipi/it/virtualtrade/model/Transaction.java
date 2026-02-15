@@ -28,7 +28,8 @@ public class Transaction {
 
     private BigDecimal executionPrice;
 
-    private Instant timestamp = Instant.now();
+    @Indexed
+    private Instant timestamp;
 
 
     public enum TransactionType {
