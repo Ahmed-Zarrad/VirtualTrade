@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Document(collection = "stocksMetadata")
