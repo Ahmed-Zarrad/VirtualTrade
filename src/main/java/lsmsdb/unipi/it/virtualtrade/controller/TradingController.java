@@ -1,11 +1,9 @@
-package lsmsdb.unipi.it.virtualtrade.controller;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+package lsmdb.unipi.it.virtualtrade.controller;
 
 import lsmsdb.unipi.it.virtualtrade.dto.TradeRequestDTO;
 import lsmsdb.unipi.it.virtualtrade.service.TradingService;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/trading")
@@ -17,24 +15,21 @@ public class TradingController {
         this.tradingService = tradingService;
     }
 
+    /**
+     * Executes a BUY operation.
+     */
     @PostMapping("/buy")
-    public ResponseEntity<String> buy(@RequestBody TradeRequestDTO dto) {
-
+    public void buy(@RequestBody TradeRequestDTO dto) {
         tradingService.buy(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Buy executed successfully");
     }
 
+    /**
+     * Executes a SELL operation.
+     */
     @PostMapping("/sell")
-    public ResponseEntity<String> sell(@RequestBody TradeRequestDTO dto) {
-
+    public void sell(@RequestBody TradeRequestDTO dto) {
         tradingService.sell(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Sell executed successfully");
     }
 }
+
 

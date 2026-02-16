@@ -49,12 +49,12 @@ public class TradingService {
             throw new RuntimeException("Insufficient funds");
         }
 
-        // 1️⃣ Update cash
+        //  Update cash
         portfolio.setCashBalance(
                 portfolio.getCashBalance().subtract(totalCost)
         );
 
-        // 2️⃣ Update holdings list
+        //  Update holdings list
         List<RedisPortfolio.Holding> holdings = portfolio.getHoldings();
 
         RedisPortfolio.Holding existing = null;
@@ -101,7 +101,7 @@ public class TradingService {
 
         redisPortfolioRepository.save(portfolio);
 
-        // 3️⃣ Save transaction in Mongo
+        //  Save transaction in Mongo
         Transaction transaction = new Transaction();
         transaction.setPortfolioId(dto.getPortfolioId());
         transaction.setSymbol(dto.getSymbol());

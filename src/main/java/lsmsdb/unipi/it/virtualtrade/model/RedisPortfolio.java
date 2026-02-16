@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.redis.core.RedisHash;
 import java.time.Instant;
 import java.util.List;
@@ -18,13 +19,18 @@ import java.math.BigDecimal;
 public class RedisPortfolio {
 
     @Id
+    private String id;
+
+    @Indexed
     private String userId;
+
+    private String portfolioName;
 
     private BigDecimal cashBalance;
 
-    private List<Holding> holdings = new ArrayList<>();
-
     private Instant lastUpdated;
+
+    private List<Holding>  holdings;
 
     @Data
     @NoArgsConstructor
