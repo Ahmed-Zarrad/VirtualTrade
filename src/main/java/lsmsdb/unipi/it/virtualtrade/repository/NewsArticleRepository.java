@@ -1,12 +1,63 @@
 package lsmsdb.unipi.it.virtualtrade.repository;
 
 import lsmsdb.unipi.it.virtualtrade.model.NewsArticle;
+import lsmsdb.unipi.it.virtualtrade.dto.NewsSentimentDTO;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.time.Instant;
 import java.util.List;
 
 public interface NewsArticleRepository extends MongoRepository<NewsArticle, String> {
-    List<NewsArticle> findByRelatedSymbolsContainingOrderByPublishedAtDesc(String symbol);
-    List<NewsArticle> findBySource(String source);
+
+    /**
+     * Returns latest global news ordered by publication date (descending).
+     */
+    Page<NewsArticle> findAllByOrderByPublishedAtDesc(Pageable pageable);
+
+
+    /**
+     * Returns latest news related to a specific stock symbol.
+     */
+    Page<NewsArticle> findByRelatedSymbolsContainingOrderByPublishedAtDesc(
+            String symbol,
+            Pageable pageable
+    );
+
+
+    /**
+     * Returns latest news filtered by source.
+     */
+    Page<NewsArticle> findBySourceOrderByPublishedAtDesc(
+            String source,
+            Pageable pageable
+    );
+
+
+    /**
+     * Aggregation:
+     * Returns top N stocks ranked by sentiment score
+     * within a given time interval.
+     *
+     * Score logic:
+     * POSITIVE = +1
+     * NEGATIVE = -1
+     * NEUTRAL  = 0
+     */
+    @Aggregation(pipeline = {
+            "{ $match: { publishedAt: { $gte: ?0, $lte: ?1 } } }",
+            "{ $unwind: '$relatedSymbols' }",
+            "{ $group: { _id: '$relatedSymbols', score: { $sum: { $switch: { branches: [ { case: { $eq: ['$sentiment', 'POSITIVE'] }, then: 1 }, { case: { $eq: ['$sentiment', 'NEGATIVE'] }, then: -1 } } ], default: 0 } } } }",
+            "{ $project: { symbol: '$_id', score: 1, _id: 0 } }",
+            "{ $sort: { score: -1 } }",
+            "{ $limit: ?2 }"
+    })
+    List<NewsSentimentDTO> findTopStocksBySentimentBetween(
+            Instant start,
+            Instant end,
+            int limit
+    );
 }
