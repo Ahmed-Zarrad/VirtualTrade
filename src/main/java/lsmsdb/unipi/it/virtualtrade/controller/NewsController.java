@@ -5,6 +5,7 @@ import lsmsdb.unipi.it.virtualtrade.model.NewsArticle;
 import lsmsdb.unipi.it.virtualtrade.service.NewsArticleService;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +25,13 @@ public class NewsController {
      * Returns paginated latest news.
      */
     @GetMapping
-    public Page<NewsArticle> getLatestNews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    public ResponseEntity<Page<NewsArticle>> getLatestNews(
+            @RequestParam(value="page",defaultValue = "0") int page,
+            @RequestParam(value="size",defaultValue = "10") int size
     ) {
-        return newsService.getLatestNews(page, size);
+        return ResponseEntity.ok(
+                newsService.getLatestNews(page, size)
+        );
     }
 
     /**
@@ -36,12 +39,14 @@ public class NewsController {
      * Returns news for a specific stock.
      */
     @GetMapping("/symbol/{symbol}")
-    public Page<NewsArticle> getNewsBySymbol(
-            @PathVariable String symbol,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    public ResponseEntity<Page<NewsArticle>> getNewsBySymbol(
+            @PathVariable("symbol") String symbol,
+            @RequestParam(value="page",defaultValue = "0") int page,
+            @RequestParam(value="size",defaultValue = "10") int size
     ) {
-        return newsService.getNewsBySymbol(symbol, page, size);
+        return ResponseEntity.ok(
+                newsService.getNewsBySymbol(symbol, page, size)
+        );
     }
 
     /**
@@ -49,12 +54,14 @@ public class NewsController {
      * Returns news filtered by source.
      */
     @GetMapping("/source/{source}")
-    public Page<NewsArticle> getNewsBySource(
-            @PathVariable String source,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    public ResponseEntity<Page<NewsArticle>> getNewsBySource(
+            @PathVariable("source") String source,
+            @RequestParam(value="page",defaultValue = "0") int page,
+            @RequestParam(value="size",defaultValue = "10") int size
     ) {
-        return newsService.getNewsBySource(source, page, size);
+        return ResponseEntity.ok(
+                newsService.getNewsBySource(source, page, size)
+        );
     }
 
     /**
@@ -66,11 +73,13 @@ public class NewsController {
      * /api/news/top-sentiment?days=7&limit=5
      */
     @GetMapping("/top-sentiment")
-    public List<NewsSentimentDTO> getTopStocksBySentiment(
-            @RequestParam(defaultValue = "7") int days,
-            @RequestParam(defaultValue = "5") int limit
+    public ResponseEntity<List<NewsSentimentDTO>> getTopStocksBySentiment(
+            @RequestParam(value="days",defaultValue = "7") int days,
+            @RequestParam(value="limit",defaultValue = "5") int limit
     ) {
-        return newsService.getTopStocksBySentiment(days, limit);
+        return ResponseEntity.ok(
+                newsService.getTopStocksBySentiment(days, limit)
+        );
     }
 }
 

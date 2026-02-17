@@ -34,9 +34,8 @@ public class PortfolioService {
      */
     public PortfolioViewDTO getPortfolioView(String userId) {
 
-        // Try to find portfolio in Redis by userId
         RedisPortfolio portfolio = redisPortfolioRepository
-                .findByUserId(userId)
+                .findById(userId)
                 .orElseGet(() -> createAndPersistEmptyPortfolio(userId));
 
         BigDecimal totalValue = portfolio.getCashBalance();
@@ -73,6 +72,8 @@ public class PortfolioService {
         }
 
         return new PortfolioViewDTO(
+                portfolio.getUserId(),
+                portfolio.getPortfolioId(),
                 portfolio.getCashBalance(),
                 totalValue,
                 totalPnL,
@@ -84,13 +85,12 @@ public class PortfolioService {
      * Creates a portfolio in BOTH Redis and Mongo.
      */
     private RedisPortfolio createAndPersistEmptyPortfolio(String userId) {
-
         String portfolioId = UUID.randomUUID().toString();
 
         // ----- REDIS -----
         RedisPortfolio redisPortfolio = new RedisPortfolio();
-        redisPortfolio.setId(portfolioId);
         redisPortfolio.setUserId(userId);
+        redisPortfolio.setPortfolioId(portfolioId);
         redisPortfolio.setPortfolioName("Default Portfolio");
         redisPortfolio.setCashBalance(new BigDecimal("10000"));
         redisPortfolio.setHoldings(new ArrayList<>());
@@ -103,6 +103,8 @@ public class PortfolioService {
         mongoPortfolio.setId(portfolioId);
         mongoPortfolio.setUserId(userId);
         mongoPortfolio.setPortfolioName("Default Portfolio");
+        mongoPortfolio.setCashBalance(new BigDecimal("10000"));
+        mongoPortfolio.setHoldings(new ArrayList<>());
         mongoPortfolio.setRecentTransactions(new ArrayList<>());
 
         mongoPortfolioRepository.save(mongoPortfolio);

@@ -7,14 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
-    List<Transaction> findByPortfolioId(String portfolioId);
-    Page<Transaction> findByPortfolioIdAndSymbolOrderByTimestampDesc(
-            String portfolioId,
+    List<Transaction> findByUserId(String userId);
+    Page<Transaction> findByUserIdAndSymbolOrderByTimestampDesc(
+            String userId,
             String symbol,
             Pageable pageable
     );
-    Page<Transaction> findByPortfolioIdOrderByTimestampDesc(
-            String portfolioId,
+    Page<Transaction> findByUserIdOrderByTimestampDesc(
+            String userId,
             Pageable pageable
     );
 }

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TradeRequestDTO {
 
-    private String portfolioId;
+    private String UserId;
     private String symbol;
     private int quantity;
 }

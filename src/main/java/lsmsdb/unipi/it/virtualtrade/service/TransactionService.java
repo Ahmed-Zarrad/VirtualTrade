@@ -120,10 +120,10 @@ public class TransactionService {
      * Returns the most recent transactions embedded in the portfolio document.
      * Optimized for dashboard display.
      */
-    public List<TransactionResponseDTO> getRecentTransactions(String portfolioId) {
+    public List<TransactionResponseDTO> getRecentTransactions(String userId) {
 
         MongoPortfolio portfolio = mongoPortfolioRepository
-                .findById(portfolioId)
+                .findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
 
         return portfolio.getRecentTransactions()
@@ -142,7 +142,7 @@ public class TransactionService {
         Pageable pageable = PageRequest.of(page, size);
 
         return transactionRepository
-                .findByPortfolioIdOrderByTimestampDesc(portfolioId, pageable)
+                .findByUserIdOrderByTimestampDesc(portfolioId, pageable)
                 .map(this::toDTO);
     }
 
@@ -157,7 +157,7 @@ public class TransactionService {
         Pageable pageable = PageRequest.of(page, size);
 
         return transactionRepository
-                .findByPortfolioIdAndSymbolOrderByTimestampDesc(
+                .findByUserIdAndSymbolOrderByTimestampDesc(
                         portfolioId,
                         symbol,
                         pageable

@@ -8,6 +8,5 @@ import java.util.Optional;
 @Repository
 public interface RedisPortfolioRepository extends CrudRepository<RedisPortfolio, String> {
 
-    Optional<RedisPortfolio> findByUserId(String userId);
 }
 

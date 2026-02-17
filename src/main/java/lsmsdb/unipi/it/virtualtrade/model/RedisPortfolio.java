@@ -19,10 +19,9 @@ import java.math.BigDecimal;
 public class RedisPortfolio {
 
     @Id
-    private String id;
-
-    @Indexed
     private String userId;
+
+    private String portfolioId;
 
     private String portfolioName;
 
@@ -30,7 +29,8 @@ public class RedisPortfolio {
 
     private Instant lastUpdated;
 
-    private List<Holding>  holdings;
+    private List<Holding>  holdings = new ArrayList<>();
+    private BigDecimal currentPrice;
 
     @Data
     @NoArgsConstructor

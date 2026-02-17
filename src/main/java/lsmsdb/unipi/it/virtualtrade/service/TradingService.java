@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import lsmsdb.unipi.it.virtualtrade.model.RedisPortfolio;
@@ -32,10 +33,12 @@ public class TradingService {
 
     public void buy(TradeRequestDTO dto) {
 
-        RedisPortfolio portfolio = redisPortfolioRepository.findById(dto.getPortfolioId())
+        RedisPortfolio portfolio = redisPortfolioRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
 
-        String priceStr = redisTemplate.opsForValue().get("price:" + dto.getSymbol());
+        String priceStr = (String) redisTemplate
+                .opsForHash()
+                .get("prices" , dto.getSymbol());
 
         if (priceStr == null) {
             throw new RuntimeException("Price not available");
@@ -56,6 +59,11 @@ public class TradingService {
 
         //  Update holdings list
         List<RedisPortfolio.Holding> holdings = portfolio.getHoldings();
+
+        if(holdings == null){
+            holdings = new ArrayList<>();
+            portfolio.setHoldings(holdings);
+        }
 
         RedisPortfolio.Holding existing = null;
 
@@ -103,7 +111,8 @@ public class TradingService {
 
         //  create Transactiion
         Transaction transaction = new Transaction();
-        transaction.setPortfolioId(dto.getPortfolioId());
+        transaction.setUserId(dto.getUserId());
+        transaction.setPortfolioId(portfolio.getPortfolioId());
         transaction.setSymbol(dto.getSymbol());
         transaction.setType(Transaction.TransactionType.BUY);
         transaction.setQuantity(dto.getQuantity());
@@ -114,7 +123,7 @@ public class TradingService {
     }
     public void sell(TradeRequestDTO dto) {
 
-        RedisPortfolio portfolio = redisPortfolioRepository.findById(dto.getPortfolioId())
+        RedisPortfolio portfolio = redisPortfolioRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
 
         String priceStr = redisTemplate.opsForValue().get("price:" + dto.getSymbol());
@@ -159,7 +168,8 @@ public class TradingService {
         redisPortfolioRepository.save(portfolio);
 
         Transaction transaction = new Transaction();
-        transaction.setPortfolioId(dto.getPortfolioId());
+        transaction.setUserId(dto.getUserId());
+        transaction.setPortfolioId(portfolio.getPortfolioId());
         transaction.setSymbol(dto.getSymbol());
         transaction.setType(Transaction.TransactionType.SELL);
         transaction.setQuantity(dto.getQuantity());

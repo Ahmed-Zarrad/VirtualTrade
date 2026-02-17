@@ -3,6 +3,7 @@ package lsmsdb.unipi.it.virtualtrade.controller;
 import lsmsdb.unipi.it.virtualtrade.dto.PortfolioViewDTO;
 import lsmsdb.unipi.it.virtualtrade.service.PortfolioService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,8 +21,8 @@ public class PortfolioController {
      * If portfolio does not exist, it is created automatically.
      */
     @GetMapping("/{userId}")
-    public PortfolioViewDTO getPortfolio(@PathVariable String userId) {
-        return portfolioService.getPortfolioView(userId);
+    public ResponseEntity<PortfolioViewDTO> getPortfolio(@PathVariable("userId") String userId) {
+        return ResponseEntity.ok(portfolioService.getPortfolioView(userId));
     }
 }
 

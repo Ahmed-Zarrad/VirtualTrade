@@ -4,6 +4,7 @@ import lsmsdb.unipi.it.virtualtrade.dto.TransactionResponseDTO;
 import lsmsdb.unipi.it.virtualtrade.service.TransactionService;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,40 +22,46 @@ public class TransactionController {
     /**
      * Returns recent transactions embedded in MongoPortfolio.
      */
-    @GetMapping("/{portfolioId}/recent")
-    public List<TransactionResponseDTO> getRecentTransactions(
-            @PathVariable String portfolioId) {
+    @GetMapping("/{userId}/recent")
+    public ResponseEntity<List<TransactionResponseDTO>> getRecentTransactions(
+            @PathVariable("userId") String userId) {
 
-        return transactionService.getRecentTransactions(portfolioId);
+        return ResponseEntity.ok(
+                transactionService.getRecentTransactions(userId)
+        );
     }
 
     /**
      * Returns full transaction history with pagination.
      */
-    @GetMapping("/{portfolioId}")
-    public Page<TransactionResponseDTO> getTransactionHistory(
-            @PathVariable String portfolioId,
-            @RequestParam int page,
-            @RequestParam int size) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<Page<TransactionResponseDTO>> getTransactionHistory(
+            @PathVariable("userId") String userId,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
 
-        return transactionService.getTransactionHistory(portfolioId, page, size);
+        return ResponseEntity.ok(
+                transactionService.getTransactionHistory(userId, page, size)
+        );
     }
 
     /**
      * Returns paginated transactions filtered by symbol.
      */
-    @GetMapping("/{portfolioId}/symbol/{symbol}")
-    public Page<TransactionResponseDTO> getTransactionsBySymbol(
-            @PathVariable String portfolioId,
-            @PathVariable String symbol,
-            @RequestParam int page,
-            @RequestParam int size) {
+    @GetMapping("/{userId}/symbol/{symbol}")
+    public ResponseEntity<Page<TransactionResponseDTO>> getTransactionsBySymbol(
+            @PathVariable("userId") String userId,
+            @PathVariable("symbol") String symbol,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
 
-        return transactionService.getTransactionsBySymbol(
-                portfolioId,
+        return ResponseEntity.ok(
+                transactionService.getTransactionsBySymbol(
+                userId,
                 symbol,
                 page,
                 size
+                )
         );
     }
 }

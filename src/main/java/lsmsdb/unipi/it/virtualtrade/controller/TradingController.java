@@ -1,7 +1,8 @@
-package lsmdb.unipi.it.virtualtrade.controller;
+package lsmsdb.unipi.it.virtualtrade.controller;
 
 import lsmsdb.unipi.it.virtualtrade.dto.TradeRequestDTO;
 import lsmsdb.unipi.it.virtualtrade.service.TradingService;
+import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +20,18 @@ public class TradingController {
      * Executes a BUY operation.
      */
     @PostMapping("/buy")
-    public void buy(@RequestBody TradeRequestDTO dto) {
+    public ResponseEntity<Void> buy(@RequestBody TradeRequestDTO dto) {
         tradingService.buy(dto);
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Executes a SELL operation.
      */
     @PostMapping("/sell")
-    public void sell(@RequestBody TradeRequestDTO dto) {
+    public ResponseEntity<Void> sell(@RequestBody TradeRequestDTO dto) {
         tradingService.sell(dto);
+        return ResponseEntity.ok().build();
     }
 }
 
