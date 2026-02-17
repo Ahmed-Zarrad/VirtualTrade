@@ -6,6 +6,7 @@ import lsmsdb.unipi.it.virtualtrade.repository.TransactionRepository;
 import lsmsdb.unipi.it.virtualtrade.repository.MongoPortfolioRepository;
 import lsmsdb.unipi.it.virtualtrade.dto.TransactionResponseDTO;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,34 +30,30 @@ public class TransactionService {
     }
 
     /**
-     * Registers a new transaction.
-     *
-     * This method:
-     * 1. Saves the transaction in MongoDB.
-     * 2. Updates cash and holdings snapshot inside MongoPortfolio.
-     * 3. Updates embedded recentTransactions (max 10).
+     * Asynchronously handles Mongo update after a trade.
+     * 1. Saves transaction in collection.
+     * 2. Updates MongoPortfolio snapshot.
      */
-    public void registerTransaction(Transaction transaction) {
+    @Async
+    public void updateMongoAfterTrade(Transaction transaction) {
 
-        //  Save full transaction history
+        //  Save transaction
         Transaction saved = transactionRepository.save(transaction);
 
-        //  Retrieve portfolio snapshot from Mongo
+        //  Retrieve portfolio
         MongoPortfolio portfolio = mongoPortfolioRepository
                 .findById(transaction.getPortfolioId())
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
 
-        BigDecimal quantityBD = BigDecimal.valueOf(transaction.getQuantity());
-        BigDecimal total = transaction.getExecutionPrice().multiply(quantityBD);
+        //  Update recentTransactions
+        List<Transaction> recent = portfolio.getRecentTransactions();
+        recent.add(0, saved);
 
-        //  Update cash
-        if (transaction.getType() == Transaction.TransactionType.BUY) {
-            portfolio.setCashBalance(portfolio.getCashBalance().subtract(total));
-        } else {
-            portfolio.setCashBalance(portfolio.getCashBalance().add(total));
+        if (recent.size() > 10) {
+            recent.remove(recent.size() - 1);
         }
 
-        //  Update holdings snapshot
+        //  Update holdings
         List<MongoPortfolio.Holding> holdings = portfolio.getHoldings();
         MongoPortfolio.Holding existing = null;
 
@@ -66,6 +63,9 @@ public class TransactionService {
                 break;
             }
         }
+
+        BigDecimal total = transaction.getExecutionPrice()
+                .multiply(BigDecimal.valueOf(transaction.getQuantity()));
 
         if (transaction.getType() == Transaction.TransactionType.BUY) {
 
@@ -93,9 +93,12 @@ public class TransactionService {
                 existing.setAverageBuyPrice(newAvg);
             }
 
+            portfolio.setCashBalance(portfolio.getCashBalance().subtract(total));
+
         } else { // SELL
 
             if (existing != null) {
+
                 int newQty = existing.getQuantity() - transaction.getQuantity();
 
                 if (newQty <= 0) {
@@ -104,23 +107,13 @@ public class TransactionService {
                     existing.setQuantity(newQty);
                 }
             }
+
+            portfolio.setCashBalance(portfolio.getCashBalance().add(total));
         }
 
-        //  Update recent transactions (max 10)
-        List<Transaction> recent = portfolio.getRecentTransactions();
-        if (recent == null) {
-            recent = new ArrayList<>();
-            portfolio.setRecentTransactions(recent);
-        }
-
-        recent.add(0, saved);
-        if (recent.size() > 10) {
-            recent.remove(recent.size() - 1);
-        }
-
-        //  Persist updated Mongo snapshot
         mongoPortfolioRepository.save(portfolio);
     }
+
 
 
     /**

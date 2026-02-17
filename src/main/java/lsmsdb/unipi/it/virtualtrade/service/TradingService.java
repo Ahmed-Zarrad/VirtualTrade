@@ -101,7 +101,7 @@ public class TradingService {
 
         redisPortfolioRepository.save(portfolio);
 
-        //  Save transaction in Mongo
+        //  create Transactiion
         Transaction transaction = new Transaction();
         transaction.setPortfolioId(dto.getPortfolioId());
         transaction.setSymbol(dto.getSymbol());
@@ -110,7 +110,7 @@ public class TradingService {
         transaction.setExecutionPrice(currentPrice);
         transaction.setTimestamp(Instant.now());
 
-        transactionService.registerTransaction(transaction);
+        transactionService.updateMongoAfterTrade(transaction);
     }
     public void sell(TradeRequestDTO dto) {
 
@@ -166,6 +166,6 @@ public class TradingService {
         transaction.setExecutionPrice(currentPrice);
         transaction.setTimestamp(Instant.now());
 
-        transactionService.registerTransaction(transaction);
+        transactionService.updateMongoAfterTrade(transaction);
     }
 }
