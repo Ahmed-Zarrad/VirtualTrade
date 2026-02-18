@@ -26,13 +26,11 @@ public class Stock {
     private Double currentPrice;
     private Double changePercent;
 
-
     @Builder.Default
     private List<DailyCandle> dailyHistory = new ArrayList<>();
 
     @LastModifiedDate
     private Instant lastUpdated;
-
 
     @Data
     @AllArgsConstructor
