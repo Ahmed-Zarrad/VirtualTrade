@@ -30,11 +30,10 @@ public class TransactionService {
     }
 
     /**
-     * Asynchronously handles Mongo update after a trade.
+     * handles Mongo update after a trade.
      * 1. Saves transaction in collection.
      * 2. Updates MongoPortfolio snapshot.
      */
-    @Async
     public void updateMongoAfterTrade(Transaction transaction) {
 
         //  Save transaction

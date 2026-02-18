@@ -126,7 +126,9 @@ public class TradingService {
         RedisPortfolio portfolio = redisPortfolioRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
 
-        String priceStr = redisTemplate.opsForValue().get("price:" + dto.getSymbol());
+        String priceStr = (String) redisTemplate
+                .opsForHash()
+                .get("prices" , dto.getSymbol());
 
         if (priceStr == null) {
             throw new RuntimeException("Price not available");

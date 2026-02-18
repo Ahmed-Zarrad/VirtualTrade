@@ -72,8 +72,6 @@ public class PortfolioService {
         }
 
         return new PortfolioViewDTO(
-                portfolio.getUserId(),
-                portfolio.getPortfolioId(),
                 portfolio.getCashBalance(),
                 totalValue,
                 totalPnL,

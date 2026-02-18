@@ -1,5 +1,6 @@
 package lsmsdb.unipi.it.virtualtrade.service;
 
+import lsmsdb.unipi.it.virtualtrade.dto.NewsArticleDTO;
 import lsmsdb.unipi.it.virtualtrade.dto.NewsSentimentDTO;
 import lsmsdb.unipi.it.virtualtrade.model.NewsArticle;
 import lsmsdb.unipi.it.virtualtrade.repository.NewsArticleRepository;
@@ -24,40 +25,45 @@ public class NewsArticleService {
     /**
      * Returns latest global news (paginated).
      */
-    public Page<NewsArticle> getLatestNews(int page, int size) {
-        return newsRepository.findAllByOrderByPublishedAtDesc(
+    public Page<NewsArticleDTO> getLatestNews(int page, int size) {
+        Page<NewsArticle> articles =
+                newsRepository.findAllByOrderByPublishedAtDesc(
                 PageRequest.of(page, size)
         );
+        return articles.map(this::toDTO);
     }
 
     /**
      * Returns latest news for a specific stock symbol.
      */
-    public Page<NewsArticle> getNewsBySymbol(
+    public Page<NewsArticleDTO> getNewsBySymbol(
             String symbol,
             int page,
             int size
     ) {
-        return newsRepository
-                .findByRelatedSymbolsContainingOrderByPublishedAtDesc(
+        Page<NewsArticle> articles =
+                newsRepository.findByRelatedSymbolsContainingOrderByPublishedAtDesc(
                         symbol,
                         PageRequest.of(page, size)
                 );
+        return articles.map(this::toDTO);
+
     }
 
     /**
      * Returns latest news filtered by source.
      */
-    public Page<NewsArticle> getNewsBySource(
+    public Page<NewsArticleDTO> getNewsBySource(
             String source,
             int page,
             int size
     ) {
-        return newsRepository
-                .findBySourceOrderByPublishedAtDesc(
+        Page<NewsArticle> articles =
+                newsRepository.findBySourceOrderByPublishedAtDesc(
                         source,
                         PageRequest.of(page, size)
                 );
+        return articles.map(this::toDTO);
     }
 
     /**
@@ -78,5 +84,22 @@ public class NewsArticleService {
                 limit
         );
     }
+
+    private NewsArticleDTO toDTO(NewsArticle article) {
+        return new NewsArticleDTO(
+                article.getTitle(),
+                article.getDescription(),
+                article.getSource(),
+                article.getUrl(),
+                article.getUrlToImage(),
+                article.getSummary(),
+                article.getPublishedAt(),
+                article.getSentiment() != null
+                        ? article.getSentiment().name()
+                        : null,
+                article.getRelatedSymbols()
+        );
+    }
 }
+
 

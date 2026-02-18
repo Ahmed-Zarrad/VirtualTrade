@@ -17,7 +17,7 @@ public class Transaction {
 
 
     @Indexed
-    private String UserId;
+    private String userId;
 
     private String portfolioId;
 

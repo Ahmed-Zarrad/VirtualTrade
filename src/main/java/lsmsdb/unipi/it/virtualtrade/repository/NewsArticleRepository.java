@@ -50,11 +50,23 @@ public interface NewsArticleRepository extends MongoRepository<NewsArticle, Stri
     @Aggregation(pipeline = {
             "{ $match: { publishedAt: { $gte: ?0, $lte: ?1 } } }",
             "{ $unwind: '$relatedSymbols' }",
-            "{ $group: { _id: '$relatedSymbols', score: { $sum: { $switch: { branches: [ { case: { $eq: ['$sentiment', 'POSITIVE'] }, then: 1 }, { case: { $eq: ['$sentiment', 'NEGATIVE'] }, then: -1 } } ], default: 0 } } } }",
+            "{ $group: { " +
+                    "_id: '$relatedSymbols', " +
+                    "score: { $sum: { " +
+                    "$switch: { " +
+                    "branches: [" +
+                    "{ case: { $eq: ['$sentiment', 'POSITIVE'] }, then: 1 }," +
+                    "{ case: { $eq: ['$sentiment', 'NEGATIVE'] }, then: -1 }" +
+                    "], " +
+                    "default: 0 " +
+                    "} " +
+                    "} } " +
+                    "} }",
             "{ $project: { symbol: '$_id', score: 1, _id: 0 } }",
             "{ $sort: { score: -1 } }",
             "{ $limit: ?2 }"
     })
+
     List<NewsSentimentDTO> findTopStocksBySentimentBetween(
             Instant start,
             Instant end,

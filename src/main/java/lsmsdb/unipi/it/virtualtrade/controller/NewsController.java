@@ -1,5 +1,6 @@
 package lsmsdb.unipi.it.virtualtrade.controller;
 
+import lsmsdb.unipi.it.virtualtrade.dto.NewsArticleDTO;
 import lsmsdb.unipi.it.virtualtrade.dto.NewsSentimentDTO;
 import lsmsdb.unipi.it.virtualtrade.model.NewsArticle;
 import lsmsdb.unipi.it.virtualtrade.service.NewsArticleService;
@@ -25,7 +26,7 @@ public class NewsController {
      * Returns paginated latest news.
      */
     @GetMapping
-    public ResponseEntity<Page<NewsArticle>> getLatestNews(
+    public ResponseEntity<Page<NewsArticleDTO>> getLatestNews(
             @RequestParam(value="page",defaultValue = "0") int page,
             @RequestParam(value="size",defaultValue = "10") int size
     ) {
@@ -39,7 +40,7 @@ public class NewsController {
      * Returns news for a specific stock.
      */
     @GetMapping("/symbol/{symbol}")
-    public ResponseEntity<Page<NewsArticle>> getNewsBySymbol(
+    public ResponseEntity<Page<NewsArticleDTO>> getNewsBySymbol(
             @PathVariable("symbol") String symbol,
             @RequestParam(value="page",defaultValue = "0") int page,
             @RequestParam(value="size",defaultValue = "10") int size
@@ -54,7 +55,7 @@ public class NewsController {
      * Returns news filtered by source.
      */
     @GetMapping("/source/{source}")
-    public ResponseEntity<Page<NewsArticle>> getNewsBySource(
+    public ResponseEntity<Page<NewsArticleDTO>> getNewsBySource(
             @PathVariable("source") String source,
             @RequestParam(value="page",defaultValue = "0") int page,
             @RequestParam(value="size",defaultValue = "10") int size
@@ -68,9 +69,6 @@ public class NewsController {
      * GET /api/news/top-sentiment
      * Returns top N stocks ranked by news sentiment
      * in the last X days.
-     *
-     * Example:
-     * /api/news/top-sentiment?days=7&limit=5
      */
     @GetMapping("/top-sentiment")
     public ResponseEntity<List<NewsSentimentDTO>> getTopStocksBySentiment(
