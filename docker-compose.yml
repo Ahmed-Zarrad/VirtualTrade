@@ -1,0 +1,21 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: virtualtrade-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=virtualtrade
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+  redis:
+    image: redis:alpine
+    container_name: virtualtrade-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  mongo-data:
