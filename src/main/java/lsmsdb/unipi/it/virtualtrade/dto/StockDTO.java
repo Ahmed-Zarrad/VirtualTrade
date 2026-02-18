@@ -19,12 +19,11 @@ public class StockDTO {
     private Double currentPrice;
     private Double changePercent;
 
-    // The chart data sent to the frontend
+
     private List<DailyCandleDTO> dailyHistory;
 
     private Instant lastUpdated;
 
-    // --- Inner DTO for the Candle Data ---
     @Data
     @Builder
     @NoArgsConstructor

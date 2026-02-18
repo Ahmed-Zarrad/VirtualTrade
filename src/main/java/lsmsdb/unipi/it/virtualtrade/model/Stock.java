@@ -17,11 +17,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "stocks") // Separate collection for high-speed access
+@Document(collection = "stocks")
 public class Stock {
 
     @Id
-    private String symbol; // e.g., "AAPL" (Links to StockMetadata)
+    private String symbol;
 
     private Double currentPrice;
     private Double changePercent;
