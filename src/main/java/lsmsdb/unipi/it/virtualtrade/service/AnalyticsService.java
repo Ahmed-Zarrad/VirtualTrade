@@ -1,4 +1,4 @@
 package lsmsdb.unipi.it.virtualtrade.service;
 
-public class MarketDataService {
+public class AnalyticsService {
 }
