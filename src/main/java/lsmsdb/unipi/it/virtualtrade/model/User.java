@@ -1,6 +1,10 @@
 package lsmsdb.unipi.it.virtualtrade.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,6 +13,9 @@ import jakarta.validation.constraints.*;
 import java.time.Instant;
 
 @Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "users")
 public class User {
 
@@ -23,8 +30,11 @@ public class User {
     private String lastName;
 
     @Indexed(unique = true)
+    @NotNull
+    @NotBlank(message = "Username must not be empty!")
     private String username;
-
+    @NotBlank(message = "Role cannot be blank")
+    private Role role;
     @Indexed(unique = true)
     @NotNull
     @NotBlank(message = "The email must not be empty!")
@@ -34,9 +44,8 @@ public class User {
     @NotNull
     @NotEmpty(message = "The password must not be empty!")
     private String passwordHash;
-
+    @CreatedDate
     private Instant createdAt = Instant.now();
 
     private boolean emailVerified = false;
-
 }
