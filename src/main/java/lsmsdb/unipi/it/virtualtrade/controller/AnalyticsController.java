@@ -29,4 +29,10 @@ public class AnalyticsController {
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
         return ResponseEntity.ok(analyticsService.getMostVolatileStocks(days, limit));
     }
+
+    @GetMapping("/top-movers")
+    public ResponseEntity<List<AnalyticsResponseDTO>> getTopMovers() {
+        List<AnalyticsResponseDTO> topMovers = analyticsService.getTopMovers();
+        return ResponseEntity.ok(topMovers);
+    }
 }

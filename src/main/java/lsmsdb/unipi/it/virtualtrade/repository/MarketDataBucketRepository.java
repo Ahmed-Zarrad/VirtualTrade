@@ -33,4 +33,14 @@ public interface MarketDataBucketRepository extends MongoRepository<MarketDataBu
             "{ $limit: ?2 }"
     })
     List<AnalyticsResponseDTO> findMostVolatileStocks(Instant start, Instant end, int limit);
+
+    // Aggregation 3: Top Movers (Highest % gain), filters by date range, calculates ((close - open) / open) * 100, and sorts descending
+
+    @Aggregation(pipeline = {
+            "{ $match: { timestamp: { $gte: ?0, $lte: ?1 } } }",
+            "{ $project: { symbol: '$symbol', value: { $multiply: [ { $divide: [ { $subtract: ['$close', '$open'] }, '$open' ] }, 100 ] }, _id: 0 } }",
+            "{ $sort: { value: -1 } }",
+            "{ $limit: ?2 }"
+    })
+    List<AnalyticsResponseDTO> findTopMovers(Instant start, Instant end, int limit);
 }
