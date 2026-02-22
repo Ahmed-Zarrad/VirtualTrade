@@ -33,7 +33,7 @@ public class User {
     @NotNull
     @NotBlank(message = "Username must not be empty!")
     private String username;
-    @NotBlank(message = "Role cannot be blank")
+    @NotNull(message = "Role cannot be null")
     private Role role;
     @Indexed(unique = true)
     @NotNull
