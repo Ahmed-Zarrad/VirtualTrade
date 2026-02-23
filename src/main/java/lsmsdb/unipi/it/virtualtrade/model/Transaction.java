@@ -21,7 +21,7 @@ import java.time.Instant;
 public class Transaction {
 
     @Id
-    private String id; // This is the ID that will be pushed to the pastTransactionIds array!
+    private String id;
 
     @Indexed
     private String userId;
@@ -33,11 +33,9 @@ public class Transaction {
 
     private Integer quantity;
 
-    // Forces MongoDB to use the precise Decimal128 format for money
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal executionPrice;
 
-    // Indexed so the repository can quickly sort history by newest first
     @Indexed
     private Instant timestamp;
 
